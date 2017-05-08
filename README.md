@@ -66,6 +66,9 @@ storage.get('app:config:templates:*'); // []
 
 // not existent key, with fallback
 storage.get('app:config:templates:*', 'no templates'); // 'no templates'
+
+// existing key with sub structure
+storage.get('app:config:*'); // [ 'my-app', 123, Object, Object ]
 ````
 
 

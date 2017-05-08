@@ -6,7 +6,7 @@ Borage is an attempt of providing yet another wrapper around the browsers localS
 
  - **Uniform methods**: The Borage API exposes only intuitive methods like *get*, *set*, *has*, *remove* and *clear*
  - **Transparent JSON serialization**: Borage automatically stringifies and parses data as JSON, so you can use any JSON compatible datatype (eg. Objects, Arrays, strings, numbers, booleans etc)
- - **Tree-like keys**: Borage is completely built around wildcard keys, that is: you segment your keys (think `app:data:templates:my-template`), Borage parses them and can return all keys matching any segment (think `app:data:templates:*`)
+ - **Tree-like keys**: Borage is completely built around wildcard keys, that is: you segment your keys (think `app:data:templates:my-template`), Borage parses them and can return all keys matching any segment (think `app:data:templates:*`, `app:data:*` or `app:*`)
  - **Makes use of ES6**: Among others, Borage implements `Symbol.iterator` and is exported as an ES6 module - bundling is up to you. No more overhead for multiple module systems!
  
 ## Usage

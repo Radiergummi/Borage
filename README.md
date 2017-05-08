@@ -73,9 +73,9 @@ storage.get('app:config:*'); // [ 'my-app', 123, Object, Object ]
 
 
 ### `Borage#set (string key, * value): void`
-Sets an item in the storage. The method does not make a difference of creating or updating an item, so you could call this *upsert*. You can use any string value for the key name, bound to two rules:
-  1. `:` signs within the key name are treated as segment separators.
-  2. Don't use an asterisk (`*`) as the last value of your key. It will inevitably throw exceptions.
+Sets an item in the storage. The method does not make a difference of creating or updating an item, so you could call this *upsert*. You can use any string value for the key name, bound to two rules:  
+  1. `:` signs within the key name are treated as segment separators.  
+  2. Don't use an asterisk (`*`) as the last value of your key. It will inevitably throw exceptions.  
 
 #### Examples:
 

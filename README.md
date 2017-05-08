@@ -86,4 +86,34 @@ storage.get('app:posts:p-123'); // Object {id: 123, name: "Most programmers are 
 storage.get('app:posts:*'); // [ Object ]
 ````
 
+
+### `Borage#remove (string key): void`
+Removes a key from the storage.
+
+#### Examples:
+
+````js
+// remove a key
+storage.remove('app:posts:p-123');
+
+// remove multiple keys
+storage.remove('app:posts:*');
+````
+
+
+### `Borage#clear ([string key]): void`
+Clears the entire storage. If a key is given, all subkeys of that key will be cleared.
+
+#### Examples:
+
+````js
+// clear the whole storage
+storage.clear();
+storage.length === 0; // true
+
+// clear all posts
+storage.clear('app:posts:*');
+storage.get('app:posts).length === 0; // true
+````
+
     TODO

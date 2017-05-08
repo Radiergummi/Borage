@@ -124,6 +124,20 @@ The `localStorage` API is a string-only key-value storage. In order to make more
  - To enable wildcard segments, Borage creates additional index keys for each segment passed to `set()`. These indexes are updated and removed as necessary and hold references to all matching keys. So if a wildcard key is requested, Borage actually performs `get()` two times: one for the wildcard index key, another to fetch all the keys listed within the index.  
  That's kind of like you would do it with redis, just less sophisticated.
 
+So if you'd create a key named `app:config:templates:home:navbar`, what Borage will actually do is the following:
+
+````
+// the new key itself
+localStorage.setItem('app:config:templates:home:navbar', 'your template content');
+
+// all index keys get the new key appended to their existing content (an array of keys)
+localStorage.setItem('app:*', previousKeys.push('app:config:templates:home:navbar'));
+localStorage.setItem('app:config:*', previousKeys.push('app:config:templates:home:navbar'));
+localStorage.setItem('app:config:templates:*', previousKeys.push('app:config:templates:home:navbar'));
+localStorage.setItem('app:config:templates:home:*' previousKeys.push('app:config:templates:home:navbar'));
+````
+
+
 ## What's next, contributing
 I'm planning on keeping Borage lean, however I'd like to implement a few things: First, a random string generator to create the storage prefix value by itself if none given, second access to and manual modification of indexes and their content. Maybe also an event emitter that emits `changed`, `removed` and `created` events and TTL expiration.  
 I welcome any contributions to this project. Please feel free to submit issues or PRs, I'll take care of them as fast as I can.

@@ -88,7 +88,8 @@ storage.get('app:posts:*'); // [ Object ]
 
 
 ### `Borage#remove (string key): void`
-Removes a key from the storage.
+Removes a key from the storage. Internally, this also walks all tree levels and removes the key from the wildcard indexes.  
+Removing multiple keys by wildcard is the same as calling `storage.clear('my-key:*');`.
 
 #### Examples:
 
@@ -103,6 +104,7 @@ storage.remove('app:posts:*');
 
 ### `Borage#clear ([string key]): void`
 Clears the entire storage. If a key is given, all subkeys of that key will be cleared.
+**Attention: Currently, calling `clear` without arguments clears the *entire* localStorage, instance-foreign keys included. Make sure you know what you're doing.**
 
 #### Examples:
 
@@ -116,4 +118,12 @@ storage.clear('app:posts:*');
 storage.get('app:posts').length === 0; // true
 ````
 
-    TODO
+## How it works
+The `localStorage` API is a string-only key-value storage. In order to make more use of this, Borage includes the following optimizations:
+ - All keys are stored as JSON and converted back upon retrieval. That way, storing scalar types, objects and arrays is defaultwithout additional thinking.
+ - To enable wildcard segments, Borage creates additional index keys for each segment passed to `set()`. These indexes are updated and removed as necessary and hold references to all matching keys. So if a wildcard key is requested, Borage actually performs `get()` two times: one for the wildcard index key, another to fetch all the keys listed within the index.  
+ That's kind of like you would do it with redis, just less sophisticated.
+
+## What's next, contributing
+I'm planning on keeping Borage lean, however I'd like to implement a few things: First, a random string generator to create the storage prefix value by itself if none given, second access to and manual modification of indexes and their content. Maybe also an event emitter that emits `changed`, `removed` and `created` events and TTL expiration.  
+I welcome any contributions to this project. Please feel free to submit issues or PRs, I'll take care of them as fast as I can.

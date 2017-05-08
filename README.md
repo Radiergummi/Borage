@@ -113,7 +113,7 @@ storage.length === 0; // true
 
 // clear all posts
 storage.clear('app:posts:*');
-storage.get('app:posts).length === 0; // true
+storage.get('app:posts').length === 0; // true
 ````
 
     TODO

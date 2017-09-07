@@ -16,7 +16,7 @@ class Borage {
    *
    * @param {string} uniqueStorageId unique ID to identify app storage keys by
    */
-  constructor (uniqueStorageId) {
+  constructor(uniqueStorageId) {
     this._uniqueStorageId = uniqueStorageId;
 
     if (typeof window.localStorage.getItem(uniqueStorageId) === 'undefined') {
@@ -30,7 +30,7 @@ class Borage {
    * @param   {string}  key item to check
    * @returns {boolean}     whether the key exists
    */
-  has (key) {
+  has(key) {
     return window.localStorage.hasOwnProperty(`${this._uniqueStorageId}:${key}`);
   }
 
@@ -41,17 +41,17 @@ class Borage {
    * @param   {*}      [fallback] optional fallback value if the key does not exist
    * @returns {*}                 stored item value or fallback value
    */
-  get (key, fallback = undefined) {
+  get(key, fallback = undefined) {
 
     // check if the key exists at all
     if (this.has(key)) {
 
       // if the key ends in an asterisk, a wildcard key is requested
-      if (key.slice(-1) === '*') {
+      if (key.slice(- 1) === '*') {
 
         // so we fetch the index key and additionally its content: keys within the given index
         return JSON.parse(window.localStorage.getItem(`${this._uniqueStorageId}:${key}`))
-          .map(subKey => JSON.parse(window.localStorage.getItem(`${this._uniqueStorageId}:${subKey}`)));
+            .map(subKey => JSON.parse(window.localStorage.getItem(`${this._uniqueStorageId}:${subKey}`)));
       }
 
       // this is a normal key, so just fetch its value
@@ -68,8 +68,8 @@ class Borage {
    * @param {string} key   item to set
    * @param {*}      value item value to set. Will be stored as JSON
    */
-  set (key, value) {
-    if (key.slice(-1) === '*') {
+  set(key, value) {
+    if (key.slice(- 1) === '*') {
       throw new TypeError('invalid key format: keys may not end in an asterisk')
     }
 
@@ -82,7 +82,7 @@ class Borage {
     // further subkeys.
     // Then, 'app:*', 'app:config:*' and 'app:config:templates:*' are created and the current
     // key is appended to them.
-    key.split(':').slice(0, -1).reduce((previous, current) => {
+    key.split(':').slice(0, - 1).reduce((previous, current) => {
       Borage._updateIndexKey(`${previous}:${current}`, key);
 
       return previous + ':' + current;
@@ -96,7 +96,7 @@ class Borage {
    *
    * @param {string} key item to remove
    */
-  remove (key) {
+  remove(key) {
 
     // remove the key itself
     window.localStorage.removeItem(`${this._uniqueStorageId}:${key}`);
@@ -120,7 +120,7 @@ class Borage {
    *
    * @param {string} [index] index to clear. if omitted, will clear the whole storage
    */
-  clear (index) {
+  clear(index) {
     if (index) {
       return Borage._getIndex(index).forEach(key => this.remove(key));
     }
@@ -128,7 +128,7 @@ class Borage {
     return window.localStorage.clear();
   }
 
-  static _updateIndexKey (index, key) {
+  static _updateIndexKey(index, key) {
     let indexKeys = Borage._getIndex(index);
 
     indexKeys.push(key);
@@ -142,11 +142,11 @@ class Borage {
    * @returns {Array}      array containing all found item keys, not the items themselves
    * @private
    */
-  static _getIndex (key) {
+  static _getIndex(key) {
     return JSON.parse(window.localStorage.getItem(`${key}:*`)) || [];
   }
 
-  static _setIndex (index, keys) {
+  static _setIndex(index, keys) {
     window.localStorage.setItem(`${index}:*`, JSON.stringify(Array.from(new Set(keys))));
   }
 
@@ -157,21 +157,21 @@ class Borage {
    * @param {string} key
    * @private
    */
-  static _removeIndexKey (index, key) {
+  static _removeIndexKey(index, key) {
     let indexKeys   = Borage._getIndex(index),
         keyPosition = indexKeys.indexOf(key);
 
-    if (keyPosition > -1) {
+    if (keyPosition > - 1) {
       indexKeys.splice(keyPosition, 1);
       Borage._setIndex(index, indexKeys);
     }
   }
 
-  get length () {
+  get length() {
     return this.get('*').length;
   }
 
-  get [Symbol.iterator] () {
+  get [Symbol.iterator]() {
     return this.get('*')[ Symbol.iterator ];
   }
 }

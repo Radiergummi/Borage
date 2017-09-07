@@ -128,6 +128,13 @@ class Borage {
     return window.localStorage.clear();
   }
 
+  /**
+   * updates an index key
+   *
+   * @param {string} index index to update
+   * @param {string} key   key to update
+   * @private
+   */
   static _updateIndexKey(index, key) {
     let indexKeys = Borage._getIndex(index);
 
@@ -146,6 +153,13 @@ class Borage {
     return JSON.parse(window.localStorage.getItem(`${key}:*`)) || [];
   }
 
+  /**
+   * sets an index key
+   *
+   * @param {string} index index to set
+   * @param {Array}  keys  keys to set on the index
+   * @private
+   */
   static _setIndex(index, keys) {
     window.localStorage.setItem(`${index}:*`, JSON.stringify(Array.from(new Set(keys))));
   }
@@ -153,8 +167,8 @@ class Borage {
   /**
    * removes a key from an index
    *
-   * @param {string} index
-   * @param {string} key
+   * @param {string} index index to remove a key from
+   * @param {string} key   key to remove from the index
    * @private
    */
   static _removeIndexKey(index, key) {
@@ -167,10 +181,20 @@ class Borage {
     }
   }
 
+  /**
+   * retrieves the number of all stored keys
+   *
+   * @returns {number}
+   */
   get length() {
     return this.get('*').length;
   }
 
+  /**
+   * iterator interface
+   *
+   * @returns {*}
+   */
   get [Symbol.iterator]() {
     return this.get('*')[ Symbol.iterator ];
   }

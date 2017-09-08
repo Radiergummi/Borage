@@ -1,0 +1,32 @@
+{
+  "name": "Borage",
+  "version": "1.0.0",
+  "description": "**Bor**ing Stor**age** - a convenient abstraction layer on top of `localStorage`",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "node-localstorage": "^1.3.0"
+  },
+  "devDependencies": {
+    "expect.js": "^0.3.1",
+    "mocha": "^3.5.0",
+    "webpack": "^3.5.6"
+  },
+  "scripts": {
+    "build": "node ./node_modules/webpack/bin/webpack",
+    "test": "node ./node_modules/mocha/bin/mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Radiergummi/Borage.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Radiergummi/Borage/issues"
+  },
+  "homepage": "https://github.com/Radiergummi/Borage#readme"
+}

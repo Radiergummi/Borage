@@ -142,10 +142,10 @@ class LocalStorage {
   /**
    * proxy to cache hasOwnProperty
    *
-   * @returns {*}
+   * @returns {boolean}
    */
-  get hasOwnProperty() {
-    return this._cache.hasOwnProperty;
+  hasOwnProperty(key) {
+    return this._cache.hasOwnProperty(key);
   }
 }
 

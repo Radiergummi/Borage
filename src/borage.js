@@ -17,10 +17,10 @@ class Borage {
    * @param {string} uniqueStorageId unique ID to identify app storage keys by
    */
   constructor(uniqueStorageId) {
-    this._uniqueStorageId = uniqueStorageId;
+    this._uniqueStorageId = String(uniqueStorageId);
 
-    if (typeof window.localStorage.getItem(uniqueStorageId) === 'undefined') {
-      window.localStorage.setItem(uniqueStorageId, {});
+    if (! window.localStorage.getItem(this._uniqueStorageId)) {
+      window.localStorage.setItem(this._uniqueStorageId, '');
     }
   }
 

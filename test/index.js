@@ -128,27 +128,27 @@ describe('Borage', () => {
     expect(borage.get('foo:bar', 'fallback')).to.equal('fallback');
   });
 
-  it('should remove a nested key and all index references', () => {
+  it('should clear the storage', () => {
     const borage = new Borage(Date.now());
 
-    borage.set('foo:bar:baz', 123);
-    borage.remove('foo:bar:baz');
+    borage.set('level0:level1:level2:level3:first', 'foo');
+    borage.set('level0:level1:level2:level3:second', 'bar');
 
-    expect(borage.get('foo:bar:baz', 'fallback')).to.equal('fallback');
-    expect(borage.get('foo:bar:*')).to.eql([]);
-    expect(borage.get('foo:*')).to.eql([]);
+    borage.clear();
+
+    expect(borage.length).to.equal(0);
   });
 
-  it('should remove a nested key and all index references but leave other indices intact', () => {
+  it('should report the length correctly', () => {
     const borage = new Borage(Date.now());
 
     borage.set('foo:bar:baz', 123);
-    borage.set('foo:test', 42);
-    borage.remove('foo:bar:baz');
+    borage.set('foo:xyz', true);
+    borage.set('foo:another', {nested: 'value', with: 'sub', properties: 'that should be ignored'});
+    borage.set('foo:it gets', 'pretty pointless from here on');
+    borage.set('foo:but you need to fill this somehow, you know?', 10);
 
-    expect(borage.get('foo:bar:baz', 'fallback')).to.equal('fallback');
-    expect(borage.get('foo:bar:*')).to.eql([]);
-    expect(borage.get('foo:*')).to.have.members([42]);
+    expect(borage).to.have.length(5);
   });
 
   it('should store obscure keys correctly', () => {
@@ -159,15 +159,20 @@ describe('Borage', () => {
     expect(borage.get('\\__§R$!§"∑€©[][|{⁄∞!?E`"$`)"`"%')).to.equal('test');
   });
 
-  it('should clear the storage', () => {
+  it('should bail on key names with an asterisk', () => {
     const borage = new Borage(Date.now());
 
-    borage.set('level0:level1:level2:level3:first', 'foo');
-    borage.set('level0:level1:level2:level3:second', 'bar');
+    expect(() => borage.set('*bar')).to.throw('invalid key format: keys may not end in an asterisk');
+    expect(() => borage.set('foo*bar')).to.throw('invalid key format: keys may not end in an asterisk');
+    expect(() => borage.set('foo*')).to.throw('invalid key format: keys may not end in an asterisk');
+  });
 
-    borage.clear();
+  it('should bail on circular references', () => {
+    const borage      = new Borage(Date.now());
+    const circle      = {key: {}};
+    circle.key.circle = circle;
 
-    expect(borage.length).to.equal(0);
+    expect(() => borage.set('circle', circle)).to.throw('Converting circular structure to JSON');
   });
 
   describe('nesting', () => {
@@ -188,6 +193,25 @@ describe('Borage', () => {
       expect(borage.get('nesting2:level0:level1:level2:level3:*')).to.have.members(['foo']);
       expect(borage.get('nesting2:level0:level1:level2:first')).to.equal('bar');
       expect(borage.get('nesting2:level0:level1:level2:*')).to.have.members(['foo', 'bar']);
+    });
+
+    it('should remove a nested key and all index references', () => {
+      borage.set('nesting3:foo:bar:baz', 123);
+      borage.remove('nesting3:foo:bar:baz');
+
+      expect(borage.get('nesting3:foo:bar:baz', 'fallback')).to.equal('fallback');
+      expect(borage.get('nesting3:foo:bar:*')).to.eql([]);
+      expect(borage.get('nesting3:foo:*')).to.eql([]);
+    });
+
+    it('should remove a nested key and all index references but leave other indices intact', () => {
+      borage.set('nesting3:foo:bar:baz', 123);
+      borage.set('nesting3:foo:test', 42);
+      borage.remove('nesting3:foo:bar:baz');
+
+      expect(borage.get('nesting3:foo:bar:baz', 'fallback')).to.equal('fallback');
+      expect(borage.get('nesting3:foo:bar:*')).to.eql([]);
+      expect(borage.get('nesting3:foo:*')).to.have.members([42]);
     });
   });
 

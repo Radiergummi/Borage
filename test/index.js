@@ -151,6 +151,24 @@ describe('Borage', () => {
     expect(borage).to.have.length(5);
   });
 
+  it('should be iteratable', () => {
+    const borage = new Borage(Date.now());
+
+    borage.set('foo:bar:baz', 123);
+    borage.set('foo:xyz', true);
+    borage.set('foo:another', {nested: 'value', with: 'sub', properties: 'that should be ignored'});
+    borage.set('foo:it gets', 'pretty pointless from here on');
+    borage.set('foo:but you need to fill this somehow, you know?', 10);
+
+    const seen = [];
+
+    for (let value of borage) {
+      seen.push(value);
+    }
+
+    expect(seen).to.have.length(5);
+  });
+
   it('should store obscure keys correctly', () => {
     const borage = new Borage(Date.now());
 

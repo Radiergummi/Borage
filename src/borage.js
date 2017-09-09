@@ -19,7 +19,7 @@ class Borage {
   constructor(uniqueStorageId) {
     this._uniqueStorageId = String(uniqueStorageId);
 
-    if (! window.localStorage.getItem(this._uniqueStorageId)) {
+    if (!window.localStorage.getItem(this._uniqueStorageId)) {
       window.localStorage.setItem(this._uniqueStorageId, '');
     }
   }
@@ -47,11 +47,11 @@ class Borage {
     if (this.has(key)) {
 
       // if the key ends in an asterisk, a wildcard key is requested
-      if (key.slice(- 1) === '*') {
+      if (key.slice(-1) === '*') {
 
         // so we fetch the index key and additionally its content: keys within the given index
         return JSON.parse(window.localStorage.getItem(`${this._uniqueStorageId}:${key}`))
-            .map(subKey => JSON.parse(window.localStorage.getItem(`${this._uniqueStorageId}:${subKey}`)));
+          .map(subKey => JSON.parse(window.localStorage.getItem(`${this._uniqueStorageId}:${subKey}`)));
       }
 
       // this is a normal key, so just fetch its value
@@ -70,7 +70,7 @@ class Borage {
    */
   set(key, value) {
     if (key.indexOf('*') !== -1) {
-      throw new TypeError('invalid key format: keys may not end in an asterisk')
+      throw new TypeError('invalid key format: keys may not end in an asterisk');
     }
 
     Borage._updateIndexKey(`${this._uniqueStorageId}`, key);
@@ -82,7 +82,7 @@ class Borage {
     // further subkeys.
     // Then, 'app:*', 'app:config:*' and 'app:config:templates:*' are created and the current
     // key is appended to them.
-    key.split(':').slice(0, - 1).reduce((previous, current) => {
+    key.split(':').slice(0, -1).reduce((previous, current) => {
       Borage._updateIndexKey(`${previous}:${current}`, key);
 
       return previous + ':' + current;
@@ -175,7 +175,7 @@ class Borage {
     let indexKeys   = Borage._getIndex(index),
         keyPosition = indexKeys.indexOf(key);
 
-    if (keyPosition > - 1) {
+    if (keyPosition > -1) {
       indexKeys.splice(keyPosition, 1);
       Borage._setIndex(index, indexKeys);
     }
@@ -196,7 +196,7 @@ class Borage {
    * @returns {*}
    */
   get [Symbol.iterator]() {
-    return this.get('*')[ Symbol.iterator ];
+    return this.get('*')[Symbol.iterator];
   }
 }
 

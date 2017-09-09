@@ -1,4 +1,4 @@
-# Borage ![Travis badge](https://api.travis-ci.org/Radiergummi/Borage.svg?branch=master "Travis test status")
+# Borage [![Travis badge](https://api.travis-ci.org/Radiergummi/Borage.svg?branch=master "Travis test status")](https://travis-ci.org/Radiergummi/Borage)
 **Bor**ing Stor**age** - a convenient abstraction layer on top of `localStorage`
 
 ## Features

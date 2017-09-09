@@ -150,7 +150,7 @@ class Borage {
    * @param {*}      value item value to set. Will be stored as JSON
    */
   set(key, value) {
-    if (key.slice(- 1) === '*') {
+    if (key.indexOf('*') !== -1) {
       throw new TypeError('invalid key format: keys may not end in an asterisk')
     }
 

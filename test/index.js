@@ -10,6 +10,7 @@ const assert = require('assert'),
       expect = require('chai').expect;
 
 const LocalStorage = require('./localStorageMock');
+//noinspection JSUnresolvedVariable
 const Borage       = require('../dist/borage').default;
 
 /**
@@ -109,12 +110,85 @@ describe('Borage', () => {
     expect(borage.get('test:*')).to.have.members([10, 20, 30]);
   });
 
+  it('should remove a key', () => {
+    const borage = new Borage(Date.now());
+
+    borage.set('foo', 123);
+    borage.remove('foo');
+
+    expect(borage.get('foo', 'fallback')).to.equal('fallback');
+  });
+
+  it('should remove a nested key', () => {
+    const borage = new Borage(Date.now());
+
+    borage.set('foo:bar', 123);
+    borage.remove('foo:bar');
+
+    expect(borage.get('foo:bar', 'fallback')).to.equal('fallback');
+  });
+
+  it('should remove a nested key and all index references', () => {
+    const borage = new Borage(Date.now());
+
+    borage.set('foo:bar:baz', 123);
+    borage.remove('foo:bar:baz');
+
+    expect(borage.get('foo:bar:baz', 'fallback')).to.equal('fallback');
+    expect(borage.get('foo:bar:*')).to.eql([]);
+    expect(borage.get('foo:*')).to.eql([]);
+  });
+
+  it('should remove a nested key and all index references but leave other indices intact', () => {
+    const borage = new Borage(Date.now());
+
+    borage.set('foo:bar:baz', 123);
+    borage.set('foo:test', 42);
+    borage.remove('foo:bar:baz');
+
+    expect(borage.get('foo:bar:baz', 'fallback')).to.equal('fallback');
+    expect(borage.get('foo:bar:*')).to.eql([]);
+    expect(borage.get('foo:*')).to.have.members([42]);
+  });
+
   it('should store obscure keys correctly', () => {
     const borage = new Borage(Date.now());
 
     borage.set('\\__§R$!§"∑€©[][|{⁄∞!?E`"$`)"`"%', 'test');
 
     expect(borage.get('\\__§R$!§"∑€©[][|{⁄∞!?E`"$`)"`"%')).to.equal('test');
+  });
+
+  it('should clear the storage', () => {
+    const borage = new Borage(Date.now());
+
+    borage.set('level0:level1:level2:level3:first', 'foo');
+    borage.set('level0:level1:level2:level3:second', 'bar');
+
+    borage.clear();
+
+    expect(borage.length).to.equal(0);
+  });
+
+  describe('nesting', () => {
+    const borage = new Borage(Date.now());
+
+    it('should add a key in the same nesting depth', () => {
+      borage.set('nesting1:level0:level1:level2:level3:first', 'foo');
+      borage.set('nesting1:level0:level1:level2:level3:second', 'bar');
+
+      expect(borage.get('nesting1:level0:level1:level2:level3:*')).to.have.members(['foo', 'bar']);
+    });
+
+    it('should add a key in a level above', () => {
+      borage.set('nesting2:level0:level1:level2:level3:first', 'foo');
+      borage.set('nesting2:level0:level1:level2:first', 'bar');
+
+      expect(borage.get('nesting2:level0:level1:level2:level3:first')).to.equal('foo');
+      expect(borage.get('nesting2:level0:level1:level2:level3:*')).to.have.members(['foo']);
+      expect(borage.get('nesting2:level0:level1:level2:first')).to.equal('bar');
+      expect(borage.get('nesting2:level0:level1:level2:*')).to.have.members(['foo', 'bar']);
+    });
   });
 
   describe('key values', () => {
@@ -127,27 +201,27 @@ describe('Borage', () => {
     });
 
     it('should store a number', () => {
-      borage.set('values:string', 42);
+      borage.set('values:number', 42);
 
-      expect(borage.get('values:string')).to.equal(42);
+      expect(borage.get('values:number')).to.equal(42);
     });
 
     it('should store a boolean', () => {
-      borage.set('values:string', true);
+      borage.set('values:boolean', true);
 
-      expect(borage.get('values:string')).to.be.true;
+      expect(borage.get('values:boolean')).to.be.true;
     });
 
     it('should store null', () => {
-      borage.set('values:string', null);
+      borage.set('values:null', null);
 
-      expect(borage.get('values:string')).to.be.null;
+      expect(borage.get('values:null')).to.be.null;
     });
 
     it('should store an array', () => {
-      borage.set('values:string', ['foo', 10, 'bar']);
+      borage.set('values:array', ['foo', 10, 'bar']);
 
-      expect(borage.get('values:string')).to.have.members([
+      expect(borage.get('values:array')).to.have.members([
         'foo',
         10,
         'bar'
@@ -155,14 +229,66 @@ describe('Borage', () => {
     });
 
     it('should store an object', () => {
-      borage.set('values:string', {
+      borage.set('values:object', {
         foo: 'sometimes while testing',
         bar: '...i question my life decisions'
       });
 
-      expect(borage.get('values:string')).to.deep.equal({
+      expect(borage.get('values:object')).to.deep.equal({
         foo: 'sometimes while testing',
         bar: '...i question my life decisions'
+      });
+    });
+
+    it('should store a deeply nested object', () => {
+      borage.set('values:deep object', {
+        foo: {
+          bar: {
+            baz: {
+              quz: {
+                more: [
+                  {
+                    keys: {
+                      are: 'below'
+                    }
+                  },
+                  {
+                    values: {
+                      follow: {
+                        too: 'yes'
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      });
+
+      expect(borage.get('values:deep object')).to.deep.equal({
+        foo: {
+          bar: {
+            baz: {
+              quz: {
+                more: [
+                  {
+                    keys: {
+                      are: 'below'
+                    }
+                  },
+                  {
+                    values: {
+                      follow: {
+                        too: 'yes'
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
       });
     });
   });

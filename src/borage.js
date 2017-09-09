@@ -187,7 +187,7 @@ class Borage {
    * @returns {number}
    */
   get length() {
-    return this.get('*').length;
+    return this.get('*', []).length;
   }
 
   /**

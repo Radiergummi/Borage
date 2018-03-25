@@ -193,7 +193,7 @@ class Borage {
   /**
    * iterator interface
    *
-   * @returns {*}
+   * @returns {function}
    */
   get [Symbol.iterator]() {
     return this.get('*')[Symbol.iterator];
